@@ -2,7 +2,7 @@
 
 A Windows desktop application for live data acquisition with National Instruments DAQ hardware. It plots many analog channels at once, records runs, drives analog and digital outputs, and hosts test apps (built-in and plugins) on an Apps bar.
 
-Built with PyQt5, pyqtgraph and NI-DAQmx. Ships as a standalone `.exe` built with PyInstaller.
+Built with PyQt5, pyqtgraph and NI-DAQmx.
 
 ---
 
@@ -37,26 +37,21 @@ Apps that would conflict (for example two apps driving the analog outputs) lock 
 
 - Windows
 - NI-DAQmx driver and a supported NI DAQ device. Without a device the app starts, but hardware features are disabled.
-- Python 3.10 (Anaconda recommended). The build script expects a conda environment named `daq_build`.
+- Python 3.10
 
 Python packages:
 
 ```
-pip install PyQt5 pyqtgraph numpy pandas scipy openpyxl matplotlib nidaqmx pint pyinstaller
+pip install PyQt5 pyqtgraph numpy pandas scipy openpyxl matplotlib nidaqmx pint
 ```
 
 ## Running from source
 
 ```
-conda activate daq_build
 python Multichannel_DAQ.py
 ```
 
 On first start, if there is no `default_settings.xlsx`, the app runs with defaults. Create one from **Edit → System Settings**.
-
-### Notebook workflow
-
-Each module is edited in a notebook of the same name (`Multichannel_DAQ.ipynb`, `DAQ_GaugeAdder.ipynb`, …). The notebook's `%%writefile` cell writes the `.py`. Run that cell after editing so the `.py` matches the notebook.
 
 ---
 
@@ -73,11 +68,8 @@ DAQ_StaticLines.py         Built-in app
 DAQ_FunctionGenerator.py   Built-in app
 DAQ_GaugeAdder.py          Built-in app
 DAQ_CustomTriggers.py      Built-in app
-Plugins/                   Plugin apps (not bundled into the .exe)
-    DAQ_FlowFailure/DAQ_FlowFailure.py
-    DAQ_ProportionalSweep/DAQ_ProportionalSweep.py
-Wrap_Executable.bat        Build script
-default_settings.xlsx      Working settings workbook (next to the .py or the .exe)
+Plugins/                   Plugin apps, one folder each (see Plugins below)
+default_settings.xlsx      Working settings workbook, next to Multichannel_DAQ.py
 ```
 
 ## Settings workbook
@@ -95,36 +87,13 @@ Settings can't be changed while acquisition or the Function Generator is running
 
 ---
 
-## Building the executable
-
-```
-Wrap_Executable.bat
-```
-
-The script:
-
-1. Activates `daq_build`.
-2. Picks the next version and checks `APP_VERSION` in `Multichannel_DAQ.py` against it.
-3. Checks that every built-in app in `APP_MODULES` (`DAQ_AppRegistry.py`) has a `--hidden-import` line, and refuses to build if one is missing.
-4. Shows a confirmation screen listing every file it will create, change or delete.
-5. Builds `dist\Multichannel_DAQ_vX.Y.Z\` with PyInstaller (one folder, windowed).
-6. Copies `Plugins\` next to the new `.exe`, leaving out notebooks and caches.
-7. Backs up the `.py` files used to `dist\SourceFiles_Multichannel_DAQ_vX.Y.Z\`.
-8. Consolidates notebooks. For each module it keeps the newest of `<name>.ipynb` / `<name>-CopyN.ipynb` and **deletes the rest**, bypassing the Recycle Bin.
-
-If PyInstaller fails, the script stops before the backup and before touching notebooks.
-
-**Before the first build**, edit the `--add-binary` line in `Wrap_Executable.bat` so it points at `python310.dll` in your own `daq_build` environment.
-
----
-
 ## Plugins
 
-Plugins are apps that live outside the `.exe`. They can be added or updated without rebuilding.
+Plugins are apps kept in their own folders, separate from the built-in apps. They can be added or updated without changing any other file.
 
 ### Layout
 
-One folder per app, inside `Plugins/` next to the `.exe` (or next to `Multichannel_DAQ.py` when running from source). The entry file is named after its folder:
+One folder per app, inside `Plugins/` next to `Multichannel_DAQ.py`. The entry file is named after its folder:
 
 ```
 Plugins/
@@ -165,12 +134,7 @@ A copy of an app needs a new `id`. A clash is reported, and the second app isn't
 
 ### What a plugin can import
 
-A plugin can only import what is bundled into the `.exe`:
-
-- the `DAQ_*` support modules, such as `DAQ_AppBase` and `DAQ_Settings`
-- the libraries in the "plugin SDK" block of `Wrap_Executable.bat`
-
-A plugin that needs anything else, or a change to a bundled module, requires adding it there and rebuilding.
+A plugin can import the `DAQ_*` support modules, such as `DAQ_AppBase` and `DAQ_Settings`, and any installed library.
 
 ---
 
@@ -180,4 +144,4 @@ A plugin that needs anything else, or a change to a bundled module, requires add
 
 ## Version
 
-The version is `APP_VERSION` in `Multichannel_DAQ.py`, shown in the window title. Each build goes to its own `dist\Multichannel_DAQ_vX.Y.Z\` folder.
+The version is `APP_VERSION` in `Multichannel_DAQ.py`, shown in the window title.
