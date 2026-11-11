@@ -26,8 +26,6 @@ Built with PyQt5, pyqtgraph and NI-DAQmx.
 | Function Generator | built-in | Waveforms and sweeps on the analog outputs |
 | Gauge Adder | built-in | Digital, dial and chart gauges per channel, with optional unit conversion (psi ↔ bar, gpm ↔ lpm, drop/min, …) |
 | Custom Triggers | built-in | Trigger and stop conditions on plotted channels or digital inputs; ordered events (digital outputs, generator starts, Start Recording, Wait); stop actions; pre- and post-trigger recording |
-| Flow Failure | plugin | Flow-failure testing against a pressure gauge and flow meter |
-| Proportional Sweep | plugin | Proportional valve sweep and leakage check |
 
 Apps that would conflict (for example two apps driving the analog outputs) lock each other out automatically.
 
